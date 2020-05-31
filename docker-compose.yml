@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  it-bff-webapi-pre:
+    image: bffwebapi:latest
+    networks:
+      - traefik_itinternal
+    restart: unless-stopped
+    volumes:
+      - ${PWD}/Logs:/app/logs
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.it-bff-webapi-pre.entryPoints=web-secure
+      - traefik.http.routers.it-bff-webapi-pre.rule=Host(`itbff-pre.linuxct.space`)
+      - traefik.http.routers.it-bff-webapi-pre.tls=true
+      - traefik.http.services.it-bff-webapi-pre.loadbalancer.server.port=80
+
+networks:
+  traefik_itinternal:
+    external: true

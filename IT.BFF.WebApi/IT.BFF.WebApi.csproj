@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\IT.BFF.Domain.Core\IT.BFF.Domain.Core.csproj" />
+      <ProjectReference Include="..\IT.BFF.Infra.TelegraphConnector\IT.BFF.Infra.TelegraphConnector.csproj" />
+    </ItemGroup>
+
+
+</Project>
