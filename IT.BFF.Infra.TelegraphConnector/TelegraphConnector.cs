@@ -39,7 +39,14 @@ namespace IT.BFF.Infra.TelegraphConnector
                     if (pageList.Pages.Count == 50)
                         currentOffset += 50;
                     else
+                    {
                         hasResultsPendingToCheck = false;
+                        while (pageList.Pages.All(x => x.Title.FromTitleWithDate() != null))
+                        {
+                            currentOffset -= 50;
+                            pageList = await _secureClient.GetPageListAsync(offset: currentOffset, limit: 50);
+                        }
+                    }
 
                     var (item1, item2) = Result(dateTimeOffset, pageList, hasResultsPendingToCheck);
                     result = item1;
@@ -52,6 +59,10 @@ namespace IT.BFF.Infra.TelegraphConnector
                 {
                     _logger.LogError("Error while retrieving the posts from the API {0}, waiting 30 seconds.", e.Message);
                     Thread.Sleep(TimeSpan.FromSeconds(30));
+                } 
+                else if (e.Message.Contains("ERROR"))
+                {
+                    _logger.LogError("The API returned an error {0}.", e.Message);
                 }
             }
 
@@ -90,7 +101,7 @@ namespace IT.BFF.Infra.TelegraphConnector
 
         private async void UpdatePageAfterChoosingTodaysPost(Page result, DateTimeOffset dateTimeOffset)
         {
-            // TODO REHACER ESTA MIERDA
+            // TODO REHACER
             var newTitle = result.Title.ToTitleWithDate(dateTimeOffset);
             var fullPage = await _client.GetPageAsync(result.Path, true);
             await _secureClient.EditPageAsync(result.Path, newTitle, fullPage.Content.ToArray());
